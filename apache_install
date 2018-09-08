@@ -1,0 +1,12 @@
+#!/bin/bash
+#Project 1
+#Logan Toler
+#Team 2; Zachary Brewer, Andy Hans, Keopiseth Hul, Kenilkumar Patel
+#Automated Apache Install
+
+echo "Installing Apache..." | tee -a apache-install.log 
+yum update -y >> apache-install.log
+yum install httpd -y >> apache-install.log
+service httpd start >> apache-install.log
+chkconfig httpd on >> apache-install.log
+echo "Installation Complete!" | tee -a apache-install.log
