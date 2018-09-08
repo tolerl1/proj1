@@ -4,6 +4,7 @@
 #Team 2; Zachary Brewer, Andy Hans, Keopiseth Hul, Kenilkumar Patel
 #Automated Apache Install
 
+#Install and Start Apache/httpd
 echo "Installing Apache..." | tee -a apache-install.log 
 yum update -y >> apache-install.log
 yum install httpd -y >> apache-install.log
