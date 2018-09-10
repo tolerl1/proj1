@@ -15,10 +15,15 @@ echo "Installation Complete!" | tee -a apache-install.log
 #Variables
 version=$(date +"%m_%d_%Y_%H_%M_%S")
 CFG="/etc/httpd/conf/httpd.conf"
-CFG="/etc/httpd/conf/httpd.conf_$version"
+CFG_BAK="/etc/httpd/conf/httpd.conf_$version"
 
 
-#create back up
+#create back up and configure httpd.conf
 echo "Backing up httpd.conf..." | tee -a apache-install.log
 cp /etc/httpd/conf/httpd.conf $CFG_BAK
-echo done | tee -a apache-install.log
+echo "Backup Complete" | tee -a apache-install.log
+echo "Configuring httpd.conf..." | tee -a apache-install.log
+sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.sp2018.team2@gmail.com/g' $CFG >> apache-install.log
+sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> apache-install.log
+sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
+sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
