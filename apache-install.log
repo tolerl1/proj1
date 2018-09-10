@@ -1,0 +1,42 @@
+Installing Apache...
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: centos.mirrors.tds.net
+ * epel: mirror.uic.edu
+ * extras: www.gtlib.gatech.edu
+ * updates: ftpmirror.your.org
+Resolving Dependencies
+--> Running transaction check
+---> Package libmspack.x86_64 0:0.5-0.5.alpha.el7 will be updated
+---> Package libmspack.x86_64 0:0.7-0.1.alpha.el7 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package           Arch           Version                    Repository    Size
+================================================================================
+Updating:
+ libmspack         x86_64         0.7-0.1.alpha.el7          epel          76 k
+
+Transaction Summary
+================================================================================
+Upgrade  1 Package
+
+Total download size: 76 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : libmspack-0.7-0.1.alpha.el7.x86_64                           1/2 
+  Cleanup    : libmspack-0.5-0.5.alpha.el7.x86_64                           2/2 
+  Verifying  : libmspack-0.7-0.1.alpha.el7.x86_64                           1/2 
+  Verifying  : libmspack-0.5-0.5.alpha.el7.x86_64                           2/2 
+
+Updated:
+  libmspack.x86_64 0:0.7-0.1.alpha.el7                                          
+
+Complete!
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile

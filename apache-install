@@ -19,5 +19,5 @@ CFG="/etc/httpd/conf/httpd.conf_$version"
 
 #create back up
 echo "Backing up httpd.conf..." | tee -a apache-install.log
-cp /etc/http/conf/httpd.conf $CFG
+cp /etc/httpd/conf/httpd.conf $CFG
 echo done | tee -a apache-install.log
