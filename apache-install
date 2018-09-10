@@ -14,10 +14,11 @@ echo "Installation Complete!" | tee -a apache-install.log
 
 #Variables
 version=$(date +"%m_%d_%Y_%H_%M_%S")
+CFG="/etc/httpd/conf/httpd.conf"
 CFG="/etc/httpd/conf/httpd.conf_$version"
 
 
 #create back up
 echo "Backing up httpd.conf..." | tee -a apache-install.log
-cp /etc/httpd/conf/httpd.conf $CFG
+cp /etc/httpd/conf/httpd.conf $CFG_BAK
 echo done | tee -a apache-install.log
