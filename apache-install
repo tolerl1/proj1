@@ -26,7 +26,4 @@ sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.sp2018.team2@gmail.com/g
 sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> apache-install.log
 sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
 sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
-
-sed -i 's@#	AllowOverride FileInfo AuthConfig Limit@ <Directory /home/*/public_html>\n     AllowOverride FileInfo AuthConfig Limit@g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
-
-sed -i 's/#    Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec/     Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
+echo "Configuration Complete." | tee -a apache-install.log
