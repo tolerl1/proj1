@@ -58,6 +58,11 @@ sed -i 's@#ServerName www.example.com:443@ ServerName 10.2.7.229:443@g' $ssl >> 
 sed -i 's@#DocumentRoot "/var/www/html"@ DocumentRoot "/var/www/html/"@g' $ssl >>  apache-install.log
 sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >> apache-install.log
 sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >> apache-install.log
+touch /etc/httpd/conf.d/non-ssl.conf
+echo "<VirtualHost *:80>" >> /etc/httpd/conf.d/non-ssl.conf
+echo "ServerName 10.2.7.229" >> /etc/httpd/conf.d/non-ssl.conf
+echo "Redirect "/" "https://10.2.7.229"" >> /etc/httpd/conf.d/non-ssl.conf
+echo "</VirtualHost>" >> /etc/httpd/conf.d/non-ssl.conf
 systemctl restart httpd.service >> apache-install.log
 echo "Configuration complete." | tee -a apache-install.log
 echo "Script complete." | tee -a apache-install.log
