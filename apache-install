@@ -8,7 +8,7 @@
 echo "Installing Apache..." | tee -a apache-install.log 
 yum update -y >> apache-install.log
 yum install httpd -y >> apache-install.log
-service httpd start >> apache-install.log
+systemctl start httpd.service >> apache-install.log
 systemctl enable httpd >> apache-install.log
 echo "Installation Complete!" | tee -a apache-install.log
 
@@ -24,7 +24,7 @@ cp /etc/httpd/conf/httpd.conf $CFG_BAK
 echo "Backup Complete" | tee -a apache-install.log
 echo "Configuring httpd.conf..." | tee -a apache-install.log
 sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >> apache-install.log
-sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:443/g' $CFG >> apache-install.log
+sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> apache-install.log
 sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
 sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
 echo "Configuration Complete." | tee -a apache-install.log
@@ -54,10 +54,10 @@ sudo chmod 700 /etc/ssl/private
 cp ca.key /etc/ssl/private/ca.key
 cp ca.csr /etc/ssl/private/ca.csr
 cp ca.crt /etc/ssl/private/ca.crt
-sed -i 's@#ServerName www.example.com:443@ ServerName 10.2.7.229:443@g' $ssl >> apache-install.log >> apache-install.log
-sed -i 's@#DocumentRoot "/var/www/html"@ DocumentRoot "/var/www/html/"@g' $ssl >> apache-install.log >> apache-install.log
+sed -i 's@#ServerName www.example.com:443@ ServerName 10.2.7.229:443@g' $ssl >> apache-install.log
+sed -i 's@#DocumentRoot "/var/www/html"@ DocumentRoot "/var/www/html/"@g' $ssl >>  apache-install.log
 sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >> apache-install.log
 sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >> apache-install.log
-service httpd restart >> apache-install.log
+systemctl restart httpd.service >> apache-install.log
 echo "Configuration complete." | tee -a apache-install.log
 echo "Script complete." | tee -a apache-install.log
