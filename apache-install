@@ -46,7 +46,7 @@ echo "Backup complete." | tee -a apache-install.log
 echo "Creating SSL keys..." | tee -a apache-install.log
 sudo openssl genrsa -out ca.key 2048 >> apache-install.log
 sudo openssl req -new -key ca.key -subj "/C=US/ST=Kentucky/L=Highland Heights/O=NKU/OU=CIT472_Team2/CN=10.2.7.229/emailAddress=cit470.fa2018.team.two@gmail.com" -out ca.csr  >> apache-install.log
-sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >> apapche-install.log
+sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >> apache-install.log
 echo "SSL keys created" | tee -a apache-install.log
 echo "Configuring SSL..." | tee -a apache-install.log
 sudo mkdir /etc/ssl/private
