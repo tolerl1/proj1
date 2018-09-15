@@ -24,7 +24,7 @@ cp /etc/httpd/conf/httpd.conf $CFG_BAK
 echo "Backup Complete" | tee -a apache-install.log
 echo "Configuring httpd.conf..." | tee -a apache-install.log
 sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >> apache-install.log
-sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> apache-install.log
+sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:443/g' $CFG >> apache-install.log
 sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
 sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
 echo "Configuration Complete." | tee -a apache-install.log
