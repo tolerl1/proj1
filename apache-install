@@ -54,8 +54,8 @@ sudo chmod 700 /etc/ssl/private
 cp ca.key /etc/ssl/private/ca.key
 cp ca.csr /etc/ssl/private/ca.csr
 cp ca.crt /etc/ssl/private/ca.crt
-sed -i 's/#ServerName www.example.com:443@/ServerName 10.2.7.229:443/g' $ssl >> apache-install.log >> apache-install.log
-sed -i 's/#DocumentRoot "/var/www/html"/DocumentRoot "/var/www/html"/g' $ssl >> apache-install.log >> apache-install.log
+sed -i 's@#ServerName www.example.com:443@ ServerName 10.2.7.229:443@g' $ssl >> apache-install.log >> apache-install.log
+sed -i 's@#DocumentRoot "/var/www/html"@ DocumentRoot "/var/www/html/"@g' $ssl >> apache-install.log >> apache-install.log
 sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >> apache-install.log
 sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >> apache-install.log
 service httpd restart >> apache-install.log
