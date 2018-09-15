@@ -41,7 +41,7 @@ echo "Installing SSL..." | tee -a apache-install.log
 sudo yum install mod_ssl openssl -y >> apache-install.log
 echo "Install Complete." | tee -a apache-install.log
 echo "Backing up ssl.conf..." | tee -a apache-install.log
-cp /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bak_version
+cp /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bak_$version
 echo "Backup complete." | tee -a apache-install.log
 echo "Creating SSL keys..." | tee -a apache-install.log
 sudo openssl genrsa -out ca.key 2048 >> apache-install.log
