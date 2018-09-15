@@ -16,13 +16,14 @@ echo "Installation Complete!" | tee -a apache-install.log
 version=$(date +"%m_%d_%Y_%H_%M_%S")
 CFG="/etc/httpd/conf/httpd.conf"
 CFG_BAK="/etc/httpd/conf/httpd.conf_$version"
+ssl="/etc/httpd/conf.d/ssl.conf"
 
 #create back up and configure httpd.conf
 echo "Backing up httpd.conf..." | tee -a apache-install.log
 cp /etc/httpd/conf/httpd.conf $CFG_BAK
 echo "Backup Complete" | tee -a apache-install.log
 echo "Configuring httpd.conf..." | tee -a apache-install.log
-sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.sp2018.team2@gmail.com/g' $CFG >> apache-install.log
+sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >> apache-install.log
 sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> apache-install.log
 sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
 sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
@@ -30,7 +31,33 @@ echo "Configuration Complete." | tee -a apache-install.log
 
 #apache ports
 echo "Configuring firewall..." | tee -a apache-install.log
-sudo firewall-cmd --zone=public --permanent --add-service=http
-sudo firewall-cmd --zone=public --permanent --add-service=https
-sudo firewall-cmd --reload
+sudo firewall-cmd --zone=public --permanent --add-service=http >> apache-install.log
+sudo firewall-cmd --zone=public --permanent --add-service=https >> apache-install.log
+sudo firewall-cmd --reload >> apache-install.log
 echo "Configuration Complete." | tee -a apache-install.log
+
+#https/ssl
+echo "Installing SSL..." | tee -a apache-install.log
+sudo yum install mod_ssl openssl -y >> apache-install.log
+echo "Install Complete." | tee -a apache-install.log
+echo "Backing up ssl.conf..." | tee -a apache-install.log
+cp /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bak_version
+echo "Backup complete." | tee -a apache-install.log
+echo "Creating SSL keys..." | tee -a apache-install.log
+sudo openssl genrsa -out ca.key 2048 >> apache-install.log
+sudo openssl req -new -key ca.key -sub "/C=US/ST=Kentucky/L=Highland Heights/O=NKU/OU=CIT 472/CN=Team 2/emailAddress=cit470.fa2018.team.two@gmail.com" >> apache-install.log
+sudo opensssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >> apapche-install.log
+echo "SSL keys created" | tee -a apache-install.log
+echo "Configuring SSL..." | tee -a apache-install.log
+sudo mkdir /etc/ssl/private
+sudo chmod 700 /etc/ssl/private
+cp ca.key /etc/ssl/private/ca.key
+cp ca.csr /etc/ssl/private/ca.csr
+cp ca.crt /etc/ssl/private/ca.crt
+sed -i 's/#ServerName www.example.com:443@/ServerName 10.2.7.229:443/g' $ssl >> apache-install.log >> apache-install.log
+sed -i 's/#DocumentRoot "/var/www/html"/DocumentRoot "/var/www/html"/g' $ssl >> apache-install.log >> apache-install.log
+sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >> apache-install.log
+sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >> apache-install.log
+service httpd restart >> apache-install.log
+echo "Configuration complete." | tee -a apache-install.log
+echo "Script complete." | tee -a apache-install.log
