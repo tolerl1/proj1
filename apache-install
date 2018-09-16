@@ -1,6 +1,6 @@
 #!/bin/bash
 #Project 1
-#Author - Logan Toler
+#Author/Created by - Logan Toler
 #Team 2 - Zachary Brewer, Kenilkumar Patel
 #Automated Apache Install
 
@@ -28,7 +28,7 @@ sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.co
 sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> $output
 echo "Configuration complete." | tee -a $output
 echo "Configuring userdir.conf..." | tee -a $output
-sed -i '31 a\AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2 \' /etc/httpd/conf.d/userdir.conf
+#sed -i '31 a\AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2 \' /etc/httpd/conf.d/userdir.conf
 sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> $output
 sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> $output
 echo "Configuration Complete." | tee -a $output
