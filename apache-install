@@ -26,6 +26,9 @@ echo "Backup Complete" | tee -a $output
 echo "Configuring httpd.conf..." | tee -a $output
 sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >> $output
 sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> $output
+echo "Configuration complete." | tee -a $output
+echo "Configuring userdir.conf..." | tee -a $output
+sed -i '31 a\AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2 \' /etc/httpd/conf.d/userdir.conf
 sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> $output
 sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> $output
 echo "Configuration Complete." | tee -a $output
