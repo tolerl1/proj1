@@ -4,65 +4,71 @@
 #Team 2 - Zachary Brewer, Kenilkumar Patel
 #Automated Apache Install
 
-#Install and Start Apache/httpd
-echo "Installing Apache..." | tee -a apache-install.log 
-yum update -y >> apache-install.log
-yum install httpd -y >> apache-install.log
-systemctl start httpd.service >> apache-install.log
-systemctl enable httpd >> apache-install.log
-echo "Installation Complete!" | tee -a apache-install.log
-
 #Variables
 version=$(date +"%m_%d_%Y_%H_%M_%S")
 CFG="/etc/httpd/conf/httpd.conf"
 CFG_BAK="/etc/httpd/conf/httpd.conf_$version"
 ssl="/etc/httpd/conf.d/ssl.conf"
+output="apache-install.log"
+
+#Install and Start Apache/httpd
+echo "Installing Apache..." | tee -a $output
+yum update -y >> $output
+yum install httpd -y >> $output
+systemctl start httpd.service >> $output
+systemctl enable httpd >> $output
+echo "Installation Complete!" | tee -a $output
 
 #create back up and configure httpd.conf
-echo "Backing up httpd.conf..." | tee -a apache-install.log
-cp /etc/httpd/conf/httpd.conf $CFG_BAK
-echo "Backup Complete" | tee -a apache-install.log
-echo "Configuring httpd.conf..." | tee -a apache-install.log
-sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >> apache-install.log
-sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> apache-install.log
-sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
-sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> apache-install.log
-echo "Configuration Complete." | tee -a apache-install.log
+echo "Backing up httpd.conf..." | tee -a $output
+cp /etc/httpd/conf/httpd.conf $CFG_BAK >> $output
+echo "Backup Complete" | tee -a $output
+echo "Configuring httpd.conf..." | tee -a $output
+sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >> $output
+sed -i 's/#ServerName www.example.com:80/ServerName 10.2.7.229:80/g' $CFG >> $output
+sed -i 's/UserDir disabled/#UserDir disabled/g' /etc/httpd/conf.d/userdir.conf >> $output
+sed -i 's/#UserDir public_html/UserDir public_html/g' /etc/httpd/conf.d/userdir.conf >> $output
+echo "Configuration Complete." | tee -a $output
 
-#apache ports
-echo "Configuring firewall..." | tee -a apache-install.log
-sudo firewall-cmd --zone=public --permanent --add-service=http >> apache-install.log
-sudo firewall-cmd --zone=public --permanent --add-service=https >> apache-install.log
-sudo firewall-cmd --reload >> apache-install.log
-echo "Configuration Complete." | tee -a apache-install.log
+#allow traffic for http&https services
+echo "Configuring firewall..." | tee -a $output
+sudo firewall-cmd --zone=public --permanent --add-service=http >> $output
+sudo firewall-cmd --zone=public --permanent --add-service=https >> $output
+sudo firewall-cmd --reload >> $output
+echo "Configuration Complete." | tee -a $output
 
-#https/ssl
-echo "Installing SSL..." | tee -a apache-install.log
-sudo yum install mod_ssl openssl -y >> apache-install.log
-echo "Install Complete." | tee -a apache-install.log
-echo "Backing up ssl.conf..." | tee -a apache-install.log
-cp /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bak_$version
-echo "Backup complete." | tee -a apache-install.log
-echo "Creating SSL keys..." | tee -a apache-install.log
-sudo openssl genrsa -out ca.key 2048 >> apache-install.log
-sudo openssl req -new -key ca.key -subj "/C=US/ST=Kentucky/L=Highland Heights/O=NKU/OU=CIT472_Team2/CN=10.2.7.229/emailAddress=cit470.fa2018.team.two@gmail.com" -out ca.csr  >> apache-install.log
-sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >> apache-install.log
-echo "SSL keys created" | tee -a apache-install.log
-echo "Configuring SSL..." | tee -a apache-install.log
-sudo mkdir /etc/ssl/private
-sudo chmod 700 /etc/ssl/private
-cp ca.key /etc/ssl/private/ca.key
-cp ca.csr /etc/ssl/private/ca.csr
-cp ca.crt /etc/ssl/private/ca.crt
-sed -i 's@#ServerName www.example.com:443@ ServerName 10.2.7.229:443@g' $ssl >> apache-install.log
-sed -i 's@#DocumentRoot "/var/www/html"@ DocumentRoot "/var/www/html/"@g' $ssl >>  apache-install.log
-sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >> apache-install.log
-sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >> apache-install.log
-touch /etc/httpd/conf.d/non-ssl.conf
-echo "<VirtualHost *:80>" >> /etc/httpd/conf.d/non-ssl.conf
-echo "ServerName 10.2.7.229" >> /etc/httpd/conf.d/non-ssl.conf
-echo "Redirect "/" "https://10.2.7.229"" >> /etc/httpd/conf.d/non-ssl.conf
-echo "</VirtualHost>" >> /etc/httpd/conf.d/non-ssl.conf
-systemctl restart httpd.service >> apache-install.log
-echo "Configuration complete." | tee -a apache-install.log
-echo "Script complete." | tee -a apache-install.log
+#https/ssl setup
+echo "Installing SSL..." | tee -a $output
+sudo yum install mod_ssl openssl -y >> $output
+echo "Install Complete." | tee -a $output
+echo "Backing up ssl.conf..." | tee -a $output
+cp /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bak_$version >> $output
+echo "Backup complete." | tee -a $output
+echo "Creating SSL keys..." | tee -a $output
+sudo openssl genrsa -out ca.key 2048 >> $output
+sudo openssl req -new -key ca.key -subj "/C=US/ST=Kentucky/L=Highland Heights/O=NKU/OU=CIT472_Team2/CN=10.2.7.229/emailAddress=cit470.fa2018.team.two@gmail.com" -out ca.csr  >> $output
+sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >> $output
+echo "SSL keys created" | tee -a $output
+echo "Configuring SSL..." | tee -a $output
+sudo mkdir /etc/ssl/private >> $output
+sudo chmod 700 /etc/ssl/private >> $output
+cp ca.key /etc/ssl/private/ca.key >> $output
+cp ca.csr /etc/ssl/private/ca.csr >> $output
+cp ca.crt /etc/ssl/private/ca.crt >> $output
+sed -i 's@#ServerName www.example.com:443@ ServerName 10.2.7.229:443@g' $ssl >> $output
+sed -i 's@#DocumentRoot "/var/www/html"@ DocumentRoot "/var/www/html/"@g' $ssl >> $output
+sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >> $output
+sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >> $output
+echo "Configuration complete." | tee -a $output
+
+#redirect http to https
+echo "Creating virtual host..." | tee -a $output
+touch /etc/httpd/conf.d/non-ssl.conf >> $output
+echo "<VirtualHost *:80>" >> /etc/httpd/conf.d/non-ssl.conf >> $output
+echo "ServerName 10.2.7.229" >> /etc/httpd/conf.d/non-ssl.conf >> $output
+echo "Redirect "/" "https://10.2.7.229"" >> /etc/httpd/conf.d/non-ssl.conf >> $output
+echo "</VirtualHost>" >> /etc/httpd/conf.d/non-ssl.conf >> $output
+echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
+
+systemctl restart httpd.service >> $output
+echo "Script complete." | tee -a $output
