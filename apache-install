@@ -27,13 +27,13 @@ echo "Backing up httpd.conf..." | tee -a $output
 cp /etc/httpd/conf/httpd.conf | tee -a $CFG_BAK $output
 echo "Backup Complete" | tee -a $output
 echo "Configuring httpd.conf..." | tee -a $output
-sed -i 's~ServerAdmin root@localhost~ServerAdmin cit470.fa2018.team.two@gmail.com~g' $CFG >& 1 >> $output
-sed -i 's~#ServerName www.example.com:80~ServerName '"$ip"'~g' | tee -a $CFG_BAK $output
+sed -i 's~ServerAdmin root@localhost~ServerAdmin cit470.fa2018.team.two@gmail.com~g' | tee -a $CFG $output
+sed -i 's~#ServerName www.example.com:80~ServerName '"$ip"'~g' | tee -a $CFG $output
 echo "Configuration complete." | tee -a $output
 echo "Configuring userdir.conf..." | tee -a $output
-echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" | tee -a $CFG_BAK $output
-sed -i 's~UserDir disabled~#UserDir disabled~g' $udir >& 1 >> $output
-sed -i 's~#UserDir public_html~UserDir public_html~g' $udir >& 1 >> $output
+echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" | tee -a $CFG $output
+sed -i 's~UserDir disabled~#UserDir disabled~g' | tee -a $udir $output
+sed -i 's~#UserDir public_html~UserDir public_html~g' | tee -a $udir $output
 echo "Configuration Complete." | tee -a $output
 
 #allow traffic for http&https services
@@ -48,7 +48,7 @@ echo "Installing SSL..." | tee -a $output
 sudo yum install mod_ssl openssl -y >& 1 >> $output
 echo "Install Complete." | tee -a $output
 echo "Backing up ssl.conf..." | tee -a $output
-cp /etc/httpd/conf.d/ssl.conf $ssl_bak_$version >& 1 >> $output
+cp /etc/httpd/conf.d/ssl.conf | tee -a $ssl_bak_$version $output
 echo "Backup complete." | tee -a $output
 echo "Creating SSL keys..." | tee -a $output
 sudo openssl genrsa -out ca.key 2048 >& 1 >> $output
