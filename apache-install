@@ -61,21 +61,21 @@ sudo chmod 700 /etc/ssl/private >> $output
 cp ca.key /etc/ssl/private/ca.key >> $output
 cp ca.csr /etc/ssl/private/ca.csr >> $output
 cp ca.crt /etc/ssl/private/ca.crt >> $output
-sed -i 's@#ServerName www.example.com:443@ServerName {$ip}:443@g' $ssl >& 1 >> $output
-sed -i 's@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g' $ssl >& 1 >> $output
-sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >& 1 >> $output
-sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >& 1 >> $output
+sed -i 's@#ServerName www.example.com:443@ServerName {$ip}:443@g' $ssl
+sed -i 's@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g' $ssl
+sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl
+sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl
 echo "Configuration complete." | tee -a $output
 
 redirect http to https
 echo "Creating virtual host..." | tee -a $output
 touch $nssl | tee -a $output
-echo "<VirtualHost *:80>" | tee -a $nssl $output
-echo "ServerName '$ip'" | tee -a $nssl $output
-echo "Redirect "/" "https://$ip"" | tee -a $nssl $output
+echo "<VirtualHost *:80>" $nssl
+echo "ServerName $ip" $nssl
+echo "Redirect "/" "https://$ip"" $nssl
 echo "</VirtualHost>" | tee -a $nssl $output
 echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
 
-systemctl restart httpd.service >& 1 >> $output
+systemctl restart httpd.service >> $output
 echo "Script complete." | tee -a $output
 #echo "Run './activate-website' located in your home directory to enable webspace."
