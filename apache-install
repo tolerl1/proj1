@@ -17,9 +17,9 @@ ip=$(/sbin/ip -o -4 addr list ens33 | awk '{print $4}' | cut -d/ -f1)
 #Install and Start Apache/httpd
 echo "Installing Apache..." | tee -a $output
 yum update -y >& 1 >> $output
-yum install httpd -y >& 1 >> $output
-systemctl start httpd.service >& 1  >> $output
-systemctl enable httpd >& 1 >> $output
+yum install httpd -y $output
+systemctl start httpd.service >> $output
+systemctl enable httpd >> $output
 echo "Installation Complete!" | tee -a $output
 
 #create back up and configure httpd.conf
@@ -27,47 +27,47 @@ echo "Backing up httpd.conf..." | tee -a $output
 cp /etc/httpd/conf/httpd.conf | tee -a $CFG_BAK $output
 echo "Backup Complete" | tee -a $output
 echo "Configuring httpd.conf..." | tee -a $output
-sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' | tee -a $CFG $output
-sed -i 's/#ServerName www.example.com:80/ServerName '$ip'/g' | tee -a $CFG $output
+sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >& 1 >> $output
+sed -i 's/#ServerName www.example.com:80/ServerName {$ip}:80/g' | tee -a $CFG $output
 echo "Configuration complete." | tee -a $output
 echo "Configuring userdir.conf..." | tee -a $output
-echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" | tee -a $CFG $output
-sed -i 's/UserDir disabled/#UserDir disabled/g' | tee -a $udir $output
-sed -i 's/#UserDir public_html/UserDir public_html/g' | tee -a $udir $output
+echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" >> $CFG
+sed -i 's/UserDir disabled/#UserDir disabled/g' $udir >& 1 >> $output
+sed -i 's/#UserDir public_html/UserDir public_html/g' $udir >& 1 >> $output
 echo "Configuration Complete." | tee -a $output
 
 #allow traffic for http&https services
 echo "Configuring firewall..." | tee -a $output
-sudo firewall-cmd --zone=public --permanent --add-service=http >& 1 >> $output
-sudo firewall-cmd --zone=public --permanent --add-service=https >& 1 >> $output
-sudo firewall-cmd --reload >& 1 >> $output
+sudo firewall-cmd --zone=public --permanent --add-service=http >> $output
+sudo firewall-cmd --zone=public --permanent --add-service=https >> $output
+sudo firewall-cmd --reload >> $output
 echo "Configuration Complete." | tee -a $output
 
 #https/ssl setup
 echo "Installing SSL..." | tee -a $output
-sudo yum install mod_ssl openssl -y >& 1 >> $output
+sudo yum install mod_ssl openssl -y >> $output
 echo "Install Complete." | tee -a $output
 echo "Backing up ssl.conf..." | tee -a $output
 cp /etc/httpd/conf.d/ssl.conf | tee -a $ssl_bak_$version $output
 echo "Backup complete." | tee -a $output
 echo "Creating SSL keys..." | tee -a $output
-sudo openssl genrsa -out ca.key 2048 >& 1 >> $output
+sudo openssl genrsa -out ca.key 2048 >> $output
 sudo openssl req -new -key ca.key -subj "/C=US/ST=Kentucky/L=Highland Heights/O=NKU/OU=CIT472_Team2/CN=$ip/emailAddress=cit470.fa2018.team.two@gmail.com" -out ca.csr  >> $output
 sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >& 1 >> $output
 echo "SSL keys created" | tee -a $output
 echo "Configuring SSL..." | tee -a $output
-sudo mkdir /etc/ssl/private >& 1 >> $output
-sudo chmod 700 /etc/ssl/private >& 1 >> $output
-cp ca.key /etc/ssl/private/ca.key >& 1 >> $output
-cp ca.csr /etc/ssl/private/ca.csr >& 1 >> $output
-cp ca.crt /etc/ssl/private/ca.crt >& 1 >> $output
-sed -i 's@#ServerName www.example.com:443@ServerName '$ip':443@g' | tee -a $ssl $output
-sed -i 's@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g' | tee -a $ssl $output
-sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' | tee -a $ssl $output
-sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' | tee -a $ssl $output
+sudo mkdir /etc/ssl/private >> $output
+sudo chmod 700 /etc/ssl/private >> $output
+cp ca.key /etc/ssl/private/ca.key >> $output
+cp ca.csr /etc/ssl/private/ca.csr >> $output
+cp ca.crt /etc/ssl/private/ca.crt >> $output
+sed -i 's@#ServerName www.example.com:443@ServerName {$ip}:443@g' $ssl >& 1 >> $output
+sed -i 's@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g' $ssl >& 1 >> $output
+sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl >& 1 >> $output
+sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl >& 1 >> $output
 echo "Configuration complete." | tee -a $output
 
-####redirect http to https
+redirect http to https
 echo "Creating virtual host..." | tee -a $output
 touch $nssl | tee -a $output
 echo "<VirtualHost *:80>" | tee -a $nssl $output
@@ -78,4 +78,4 @@ echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
 
 systemctl restart httpd.service >& 1 >> $output
 echo "Script complete." | tee -a $output
-#echo "Run 'chmod 711 .' in your home directory to enable webspace. See 'apache-info.txt' for instructions."
+#echo "Run './activate-website' located in your home directory to enable webspace."
