@@ -78,4 +78,4 @@ echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
 
 systemctl restart httpd.service >& 1 >> $output
 echo "Script complete." | tee -a $output
-echo "Run 'chmod 711 .' in your home directory to enable webspace. See 'apache-info.txt' for instructions."
+#echo "Run 'chmod 711 .' in your home directory to enable webspace. See 'apache-info.txt' for instructions."
