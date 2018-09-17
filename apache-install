@@ -24,16 +24,16 @@ echo "Installation Complete!" | tee -a $output
 
 #create back up and configure httpd.conf
 echo "Backing up httpd.conf..." | tee -a $output
-cp /etc/httpd/conf/httpd.conf | tee -a $CFG_BAK $output
+cp /etc/httpd/conf/httpd.conf /$CFG_BAK | tee -a $output
 echo "Backup Complete" | tee -a $output
 echo "Configuring httpd.conf..." | tee -a $output
-sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' $CFG >& 1 >> $output
-sed -i 's/#ServerName www.example.com:80/ServerName {$ip}:80/g' | tee -a $CFG $output
+sed -i "s/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g" $CFG >> $output
+sed -i "s/#ServerName www.example.com:80/ServerName {$ip}:80/g" $CFG >> $output
 echo "Configuration complete." | tee -a $output
 echo "Configuring userdir.conf..." | tee -a $output
 echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" >> $CFG
-sed -i 's/UserDir disabled/#UserDir disabled/g' $udir >& 1 >> $output
-sed -i 's/#UserDir public_html/UserDir public_html/g' $udir >& 1 >> $output
+sed -i "s/UserDir disabled/#UserDir disabled/g" $udir >> $output
+sed -i "s/#UserDir public_html/UserDir public_html/g" $udir >> $output
 echo "Configuration Complete." | tee -a $output
 
 #allow traffic for http&https services
@@ -48,7 +48,7 @@ echo "Installing SSL..." | tee -a $output
 sudo yum install mod_ssl openssl -y >> $output
 echo "Install Complete." | tee -a $output
 echo "Backing up ssl.conf..." | tee -a $output
-cp /etc/httpd/conf.d/ssl.conf | tee -a $ssl_bak_$version $output
+cp /etc/httpd/conf.d/ssl.conf /$ssl_bak_$version >> $output
 echo "Backup complete." | tee -a $output
 echo "Creating SSL keys..." | tee -a $output
 sudo openssl genrsa -out ca.key 2048 >> $output
@@ -61,19 +61,19 @@ sudo chmod 700 /etc/ssl/private >> $output
 cp ca.key /etc/ssl/private/ca.key >> $output
 cp ca.csr /etc/ssl/private/ca.csr >> $output
 cp ca.crt /etc/ssl/private/ca.crt >> $output
-sed -i 's@#ServerName www.example.com:443@ServerName {$ip}:443@g' $ssl
-sed -i 's@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g' $ssl
-sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' $ssl
-sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' $ssl
+sed -i "s@#ServerName www.example.com:443@ServerName {$ip}:443@g" $ssl
+sed -i "s@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g" $ssl
+sed -i "s\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g" $ssl
+sed -i "s\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g" $ssl
 echo "Configuration complete." | tee -a $output
 
 redirect http to https
 echo "Creating virtual host..." | tee -a $output
 touch $nssl | tee -a $output
-echo "<VirtualHost *:80>" $nssl
-echo "ServerName $ip" $nssl
-echo "Redirect "/" "https://$ip"" $nssl
-echo "</VirtualHost>" | tee -a $nssl $output
+echo "<VirtualHost *:80>" >> $nssl
+echo "ServerName $ip" >> $nssl
+echo "Redirect "/" "https://$ip"" >> $nssl
+echo "</VirtualHost>" >> $nssl
 echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
 
 systemctl restart httpd.service >> $output
