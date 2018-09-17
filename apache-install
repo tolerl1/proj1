@@ -27,13 +27,13 @@ echo "Backing up httpd.conf..." | tee -a $output
 cp /etc/httpd/conf/httpd.conf | tee -a $CFG_BAK $output
 echo "Backup Complete" | tee -a $output
 echo "Configuring httpd.conf..." | tee -a $output
-sed -i 's~ServerAdmin root@localhost~ServerAdmin cit470.fa2018.team.two@gmail.com~g' | tee -a $CFG $output
-sed -i 's~#ServerName www.example.com:80~ServerName '"$ip"'~g' | tee -a $CFG $output
+sed -i 's/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g' | tee -a $CFG $output
+sed -i 's/#ServerName www.example.com:80/ServerName '$ip'/g' | tee -a $CFG $output
 echo "Configuration complete." | tee -a $output
 echo "Configuring userdir.conf..." | tee -a $output
 echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" | tee -a $CFG $output
-sed -i 's~UserDir disabled~#UserDir disabled~g' | tee -a $udir $output
-sed -i 's~#UserDir public_html~UserDir public_html~g' | tee -a $udir $output
+sed -i 's/UserDir disabled/#UserDir disabled/g' | tee -a $udir $output
+sed -i 's/#UserDir public_html/UserDir public_html/g' | tee -a $udir $output
 echo "Configuration Complete." | tee -a $output
 
 #allow traffic for http&https services
@@ -61,10 +61,10 @@ sudo chmod 700 /etc/ssl/private >& 1 >> $output
 cp ca.key /etc/ssl/private/ca.key >& 1 >> $output
 cp ca.csr /etc/ssl/private/ca.csr >& 1 >> $output
 cp ca.crt /etc/ssl/private/ca.crt >& 1 >> $output
-sed -i 's~#ServerName www.example.com:443~ServerName '"$ip"':443~g' | tee -a $ssl $output
-sed -i 's~#DocumentRoot "/var/www/html"~DocumentRoot "/var/www/html/"~g' | tee -a $ssl $output
-sed -i 's~SSLCertificateKeyFile /etc/pki/tls/private/localhost.key~SSLCertificateKeyFile /etc/ssl/private/ca.key~g' | tee -a $ssl $output
-sed -i 's~SSLCertificateFile /etc/pki/tls/certs/localhost.crt~SSLCertificateFile /etc/ssl/private/ca.crt~g' | tee -a $ssl $output
+sed -i 's@#ServerName www.example.com:443@ServerName '$ip':443@g' | tee -a $ssl $output
+sed -i 's@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g' | tee -a $ssl $output
+sed -i 's\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g' | tee -a $ssl $output
+sed -i 's\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g' | tee -a $ssl $output
 echo "Configuration complete." | tee -a $output
 
 ####redirect http to https
