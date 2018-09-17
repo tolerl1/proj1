@@ -16,8 +16,8 @@ ip=$(/sbin/ip -o -4 addr list ens33 | awk '{print $4}' | cut -d/ -f1)
 
 #Install and Start Apache/httpd
 echo "Installing Apache..." | tee -a $output
-yum update -y >& 1 >> $output
-yum install httpd -y $output
+yum update -y >> $output
+yum install httpd -y >> $output
 systemctl start httpd.service >> $output
 systemctl enable httpd >> $output
 echo "Installation Complete!" | tee -a $output
@@ -28,7 +28,7 @@ cp /etc/httpd/conf/httpd.conf /$CFG_BAK | tee -a $output
 echo "Backup Complete" | tee -a $output
 echo "Configuring httpd.conf..." | tee -a $output
 sed -i "s/ServerAdmin root@localhost/ServerAdmin cit470.fa2018.team.two@gmail.com/g" $CFG >> $output
-sed -i "s/#ServerName www.example.com:80/ServerName {$ip}:80/g" $CFG >> $output
+sed -i "s/#ServerName www.example.com:80/ServerName $ip:80/g" $CFG >> $output
 echo "Configuration complete." | tee -a $output
 echo "Configuring userdir.conf..." | tee -a $output
 echo "AliasMatch ^/users/(.*)/(.*)$ /home/$1/public_html/$2" >> $CFG
@@ -53,7 +53,7 @@ echo "Backup complete." | tee -a $output
 echo "Creating SSL keys..." | tee -a $output
 sudo openssl genrsa -out ca.key 2048 >> $output
 sudo openssl req -new -key ca.key -subj "/C=US/ST=Kentucky/L=Highland Heights/O=NKU/OU=CIT472_Team2/CN=$ip/emailAddress=cit470.fa2018.team.two@gmail.com" -out ca.csr  >> $output
-sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >& 1 >> $output
+sudo openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt >> $output
 echo "SSL keys created" | tee -a $output
 echo "Configuring SSL..." | tee -a $output
 sudo mkdir /etc/ssl/private >> $output
@@ -61,13 +61,13 @@ sudo chmod 700 /etc/ssl/private >> $output
 cp ca.key /etc/ssl/private/ca.key >> $output
 cp ca.csr /etc/ssl/private/ca.csr >> $output
 cp ca.crt /etc/ssl/private/ca.crt >> $output
-sed -i "s@#ServerName www.example.com:443@ServerName {$ip}:443@g" $ssl
-sed -i "s@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g" $ssl
-sed -i "s\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g" $ssl
-sed -i "s\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g" $ssl
+sed -i "s@#ServerName www.example.com:443@ServerName $ip:443@g" $ssl >> $output
+sed -i "s@#DocumentRoot /var/www/html@DocumentRoot /var/www/html/@g" $ssl >> $output
+sed -i "s\SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\SSLCertificateKeyFile /etc/ssl/private/ca.key\g" $ssl >> $output
+sed -i "s\SSLCertificateFile /etc/pki/tls/certs/localhost.crt\SSLCertificateFile /etc/ssl/private/ca.crt\g" $ssl >> $output
 echo "Configuration complete." | tee -a $output
 
-redirect http to https
+#redirect http to https
 echo "Creating virtual host..." | tee -a $output
 touch $nssl | tee -a $output
 echo "<VirtualHost *:80>" >> $nssl
@@ -75,7 +75,17 @@ echo "ServerName $ip" >> $nssl
 echo "Redirect "/" "https://$ip"" >> $nssl
 echo "</VirtualHost>" >> $nssl
 echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
-
 systemctl restart httpd.service >> $output
+
+#create activate-website script
+ac-sh="/etc/skel/activate-website
+echo "Building activation script..." | tee -a $output
+touch $ac-sh | tee -a $output
+chmod 755 $ac-sh
+echo "#!/bin/bash" >> $ac-sh
+echo "user="$(whoami)"" >> $ac-sh
+echo "chmod 711 /home/$user" >> $ac-sh
+echo "Build complete. The script is located in each user's home directory." >> $output
+
 echo "Script complete." | tee -a $output
 #echo "Run './activate-website' located in your home directory to enable webspace."
