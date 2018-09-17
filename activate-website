@@ -1,6 +1,8 @@
 #!/bin/bash
 
-ip=$(/sbin/ip -o -4 addr list ens33 | awk '{print $4}' | cut -d/ -f1)
+user="$(whoami)"
+
+chmod 711 /home/$user
 
 
 
