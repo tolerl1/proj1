@@ -78,14 +78,14 @@ echo "Virtual host created. All traffic is sent through HTTPS." | tee -a $output
 systemctl restart httpd.service >> $output
 
 #create activate-website script
-ac-sh="/etc/skel/activate-website
+ac="/etc/skel/activate-website"
 echo "Building activation script..." | tee -a $output
-touch $ac-sh | tee -a $output
-chmod 755 $ac-sh
+touch $ac | tee -a $output
+chmod 755 $ac
 echo "#!/bin/bash" >> $ac-sh
 echo "user="$(whoami)"" >> $ac-sh
 echo "chmod 711 /home/$user" >> $ac-sh
-echo "Build complete. The script is located in each user's home directory." >> $output
+echo "Build complete." | tee -a $output
 
 echo "Script complete." | tee -a $output
-#echo "Run './activate-website' located in your home directory to enable webspace."
+echo "Run './activate-website' located in your home directory to enable webspace."
