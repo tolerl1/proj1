@@ -1,0 +1,4 @@
+#Team 2 - Logan Toler, Keni Patel, Zach Brewer
+
+File: apache-install
+Purpose: Automate Apache install and configuration
