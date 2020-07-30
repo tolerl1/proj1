@@ -1,0 +1,9 @@
+#!/bin/bash
+
+user="$(whoami)"
+
+chmod 711 /home/$user
+
+
+
+
